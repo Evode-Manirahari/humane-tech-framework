@@ -244,7 +244,8 @@ export class GroundedUX {
         sentiment: 0,
         patterns: [],
         escalationLevel: 'low',
-        riskFactors: []
+        riskFactors: [],
+        timestamp: new Date().toISOString()
       },
       interventions: [],
       userPreferences: {}

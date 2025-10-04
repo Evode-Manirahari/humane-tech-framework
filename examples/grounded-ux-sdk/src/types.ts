@@ -83,6 +83,7 @@ export interface EmotionalAnalysis {
   patterns: string[];
   escalationLevel: 'low' | 'medium' | 'high';
   riskFactors: string[];
+  timestamp: string;
 }
 
 export interface TelemetryData {

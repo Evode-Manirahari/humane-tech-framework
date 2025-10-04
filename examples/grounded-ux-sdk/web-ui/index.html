@@ -19,9 +19,20 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .main-content {
+            grid-column: 1;
+        }
+
+        .sidebar {
+            grid-column: 2;
         }
 
         .header {
@@ -227,116 +238,154 @@
             background: #689f38;
         }
 
-        .controls {
+        .reflection-prompt {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .sidebar-controls {
             background: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
             border: 1px solid #e8e6e3;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar-controls h3 {
+            margin: 0 0 20px 0;
+            font-size: 16px;
+            color: #4a4a4a;
+            font-weight: 600;
         }
 
         .control-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
+            margin-bottom: 20px;
         }
 
         .control-group label {
-            min-width: 120px;
-            font-size: 14px;
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 500;
         }
 
-        .control-group input, .control-group select {
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        .control-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e8e6e3;
+            border-radius: 6px;
+            background: #faf9f7;
+            font-size: 14px;
+            color: #4a4a4a;
+        }
+
+        .control-group select:focus {
+            outline: none;
+            border-color: #8bc34a;
+            box-shadow: 0 0 0 2px rgba(139, 195, 74, 0.1);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>ALMA</h1>
-            <p>Reality-anchored conversations with built-in safeguards</p>
-        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>ALMA</h1>
+                <p>Reality-anchored conversations with built-in safeguards</p>
+            </div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="promptCount">0</div>
-                <div class="stat-label">Prompts</div>
-                <div class="tally" id="tally"></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="stanceScore">0.00</div>
-                <div class="stat-label">Stance Score</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="emotionalLevel">low</div>
-                <div class="stat-label">Emotional Level</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="interventions">0</div>
-                <div class="stat-label">Interventions</div>
-            </div>
-        </div>
-
-        <div class="controls">
-            <h3>Configuration</h3>
-            <div class="control-group">
-                <label>Red Reply Frequency:</label>
-                <select id="redReplyFreq">
-                    <option value="3">Every 3 prompts</option>
-                    <option value="5" selected>Every 5 prompts</option>
-                    <option value="7">Every 7 prompts</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label>Stance Threshold:</label>
-                <select id="stanceThreshold">
-                    <option value="1">1 (sensitive)</option>
-                    <option value="2" selected>2 (moderate)</option>
-                    <option value="3">3 (conservative)</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label>Emotional Sensitivity:</label>
-                <select id="emotionalSensitivity">
-                    <option value="1">1 (low)</option>
-                    <option value="2">2 (moderate)</option>
-                    <option value="3" selected>3 (high)</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="chat-container">
-            <div class="chat-messages" id="chatMessages">
-                <div class="message ai-message">
-                    <strong>🤖 ALMA:</strong> Welcome! I'm here to help with reality-anchored conversations. Try sending messages to see how ALMA's safeguards work.
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="promptCount">0</div>
+                    <div class="stat-label">Prompts</div>
+                    <div class="tally" id="tally"></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stanceScore">0.00</div>
+                    <div class="stat-label">Stance Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="emotionalLevel">low</div>
+                    <div class="stat-label">Emotional Level</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="interventions">0</div>
+                    <div class="stat-label">Interventions</div>
                 </div>
             </div>
-            <div class="chat-input">
-                <input type="text" id="messageInput" placeholder="Type your message here..." />
-                <button onclick="sendMessage()">Send</button>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <strong>🤖 ALMA:</strong> Welcome! I'm here to help with reality-anchored conversations. Try sending messages to see how ALMA's safeguards work.
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="Type your message here..." />
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-controls">
+                <h3>Configuration</h3>
+                <div class="control-group">
+                    <label>Red Reply Frequency</label>
+                    <select id="redReplyFreq">
+                        <option value="3">Every 3 prompts</option>
+                        <option value="5" selected>Every 5 prompts</option>
+                        <option value="7">Every 7 prompts</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Stance Threshold</label>
+                    <select id="stanceThreshold">
+                        <option value="1">1 (sensitive)</option>
+                        <option value="2" selected>2 (moderate)</option>
+                        <option value="3">3 (conservative)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Emotional Sensitivity</label>
+                    <select id="emotionalSensitivity">
+                        <option value="1">1 (low)</option>
+                        <option value="2">2 (moderate)</option>
+                        <option value="3" selected>3 (high)</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Simple SDK simulation (since we can't import the actual SDK in browser)
-        class SimpleGroundedUX {
+        // Enhanced ALMA SDK simulation with all requested features
+        class ALMA {
             constructor(config = {}) {
                 this.config = {
                     redEveryNPrompts: config.redEveryNPrompts || 5,
                     stanceThreshold: config.stanceThreshold || 2,
                     emotionalSensitivity: config.emotionalSensitivity || 3,
+                    stanceWindowMinutes: 25, // 25-minute window for stance analysis
                     ...config
                 };
                 this.promptCount = 0;
                 this.stanceScore = 0;
                 this.emotionalLevel = 'low';
                 this.interventions = 0;
+                this.sessionStartTime = Date.now();
+                this.stanceHistory = []; // Track stance over time
+                this.lastReflectionPrompt = 0;
+                this.conversationTopics = new Set();
             }
 
             countPrompt() {
@@ -344,17 +393,47 @@
             }
 
             getInterventions(message) {
+                // Feature 1: Red Reply Every N Prompts (Oreo Cookie Psychology)
+                const shouldApplyRedReply = this.promptCount > 0 && this.promptCount % this.config.redEveryNPrompts === 0;
+                
+                // Feature 2: Stance Counter-Balance Every 25 Minutes
+                const shouldShowOpposingGlance = this.shouldShowOpposingGlance();
+                
+                // Feature 3: Emotional Escalation Detection
+                const shouldEscalateToHuman = this.detectEmotionalEscalation(message);
+                
+                // Feature 4: Reflection Prompts
+                const shouldTriggerReflection = this.shouldTriggerReflection();
+                
+                // Analyze current message
+                const currentStance = this.analyzeStance(message);
+                const currentEmotion = this.analyzeEmotion(message);
+                
+                // Update stance history with timestamp
+                this.stanceHistory.push({
+                    score: currentStance,
+                    timestamp: Date.now(),
+                    message: message.substring(0, 50) + '...'
+                });
+                
+                // Clean old stance history (keep only last 25 minutes)
+                this.cleanStanceHistory();
+
                 const interventions = {
-                    shouldApplyRedReply: this.promptCount % this.config.redEveryNPrompts === 0,
-                    shouldShowOpposingGlance: Math.abs(this.stanceScore) >= this.config.stanceThreshold,
-                    shouldEscalateToHuman: this.detectEmotionalEscalation(message),
-                    stanceScore: this.analyzeStance(message),
-                    emotionalLevel: this.analyzeEmotion(message)
+                    shouldApplyRedReply,
+                    shouldShowOpposingGlance,
+                    shouldEscalateToHuman,
+                    shouldTriggerReflection,
+                    stanceScore: currentStance,
+                    emotionalLevel: currentEmotion,
+                    sessionDuration: this.getSessionDuration(),
+                    averageStance: this.getAverageStance()
                 };
 
-                if (interventions.shouldApplyRedReply || interventions.shouldShowOpposingGlance || interventions.shouldEscalateToHuman) {
-                    this.interventions++;
-                }
+                // Count interventions
+                const interventionCount = [shouldApplyRedReply, shouldShowOpposingGlance, shouldEscalateToHuman, shouldTriggerReflection]
+                    .filter(Boolean).length;
+                this.interventions += interventionCount;
 
                 return interventions;
             }
@@ -403,6 +482,92 @@
                 return crisisWords.some(word => lowerMessage.includes(word)) || this.emotionalLevel === 'high';
             }
 
+            // Feature 1: Oreo Cookie Psychology - Red Reply Every N Prompts
+            shouldApplyRedReply() {
+                return this.promptCount > 0 && this.promptCount % this.config.redEveryNPrompts === 0;
+            }
+
+            // Feature 2: Stance Counter-Balance Every 25 Minutes
+            shouldShowOpposingGlance() {
+                const sessionDuration = this.getSessionDuration();
+                const hasEmotionalContent = this.stanceHistory.some(entry => 
+                    Math.abs(entry.score) >= this.config.stanceThreshold
+                );
+                
+                // Show opposing glance if:
+                // 1. Session is longer than 25 minutes AND
+                // 2. We have significant stance drift AND
+                // 3. We haven't shown one recently
+                return sessionDuration >= this.config.stanceWindowMinutes && 
+                       hasEmotionalContent && 
+                       Math.abs(this.getAverageStance()) >= this.config.stanceThreshold;
+            }
+
+            // Feature 3: Reflection Prompts
+            shouldTriggerReflection() {
+                // Trigger reflection every 10 prompts or when emotional level is medium+
+                const shouldTrigger = this.promptCount > 0 && 
+                    (this.promptCount % 10 === 0 || this.emotionalLevel === 'medium' || this.emotionalLevel === 'high');
+                
+                if (shouldTrigger && this.promptCount > this.lastReflectionPrompt + 5) {
+                    this.lastReflectionPrompt = this.promptCount;
+                    return true;
+                }
+                return false;
+            }
+
+            // Helper methods
+            getSessionDuration() {
+                return Math.round((Date.now() - this.sessionStartTime) / (1000 * 60)); // minutes
+            }
+
+            getAverageStance() {
+                if (this.stanceHistory.length === 0) return 0;
+                
+                const recentHistory = this.stanceHistory.slice(-10); // Last 10 messages
+                const sum = recentHistory.reduce((acc, entry) => acc + entry.score, 0);
+                return sum / recentHistory.length;
+            }
+
+            cleanStanceHistory() {
+                const cutoffTime = Date.now() - (this.config.stanceWindowMinutes * 60 * 1000);
+                this.stanceHistory = this.stanceHistory.filter(entry => entry.timestamp > cutoffTime);
+            }
+
+            // Generate opposing perspective content
+            generateOpposingGlance() {
+                const averageStance = this.getAverageStance();
+                
+                if (averageStance < -1.5) {
+                    // User is leaning left, show right perspective
+                    return {
+                        content: "Some argue that traditional approaches to governance may offer stability and proven solutions that shouldn't be dismissed.",
+                        offset: 2.0
+                    };
+                } else if (averageStance > 1.5) {
+                    // User is leaning right, show left perspective
+                    return {
+                        content: "Others suggest that progressive policies and social reforms may address current challenges more effectively than traditional approaches.",
+                        offset: -2.0
+                    };
+                }
+                
+                return null;
+            }
+
+            // Generate reflection prompt
+            generateReflectionPrompt() {
+                const prompts = [
+                    "What do we know vs what did we assume so far?",
+                    "Let's pause and reflect: what are the facts vs our interpretations?",
+                    "Quick check: are we exploring ideas or confirming beliefs?",
+                    "What evidence supports our current understanding?",
+                    "Are there alternative viewpoints we haven't considered?"
+                ];
+                
+                return prompts[Math.floor(Math.random() * prompts.length)];
+            }
+
             labelClaims(text) {
                 // Simple claim labeling
                 const citedPattern = /according to|research shows|studies indicate|data suggests/i;
@@ -420,8 +585,8 @@
             }
         }
 
-        // Initialize SDK
-        let gx = new SimpleGroundedUX();
+        // Initialize ALMA SDK
+        let gx = new ALMA();
 
         // Update configuration when controls change
         document.getElementById('redReplyFreq').addEventListener('change', (e) => {
@@ -459,7 +624,7 @@
             }
         }
 
-        function addMessage(content, isUser = false, isRedReply = false, hasOpposingGlance = false, hasHumanOptions = false) {
+        function addMessage(content, isUser = false, isRedReply = false, hasOpposingGlance = false, hasHumanOptions = false, hasReflectionPrompt = false) {
             const messagesContainer = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'} ${isRedReply ? 'red-reply' : ''}`;
@@ -468,11 +633,14 @@
             
             // Add opposing glance if needed
             if (hasOpposingGlance && !isUser) {
-                messageContent += `
-                    <div class="opposing-glance">
-                        <strong>Different Perspective:</strong> Some argue that traditional approaches may offer stability and proven solutions.
-                    </div>
-                `;
+                const opposingGlance = gx.generateOpposingGlance();
+                if (opposingGlance) {
+                    messageContent += `
+                        <div class="opposing-glance">
+                            <strong>Different Perspective:</strong> ${opposingGlance.content}
+                        </div>
+                    `;
+                }
             }
             
             // Add human options if needed
@@ -481,9 +649,19 @@
                     <div class="human-options">
                         <h4>💚 Human Support Available</h4>
                         <p>If you're going through a difficult time, consider reaching out to:</p>
-                        <button>Text a Friend</button>
-                        <button>Call Therapist</button>
-                        <button>Crisis Support</button>
+                        <button onclick="openEmailApp()">Open Email</button>
+                        <button onclick="openMessagesApp()">Open Messages</button>
+                        <button onclick="openTherapistFinder()">Find Therapist</button>
+                    </div>
+                `;
+            }
+
+            // Add reflection prompt if needed
+            if (hasReflectionPrompt && !isUser) {
+                const reflectionPrompt = gx.generateReflectionPrompt();
+                messageContent += `
+                    <div class="reflection-prompt">
+                        <strong>💭 Reflection:</strong> ${reflectionPrompt}
                     </div>
                 `;
             }
@@ -517,9 +695,10 @@
             const isRedReply = interventions.shouldApplyRedReply;
             const hasOpposingGlance = interventions.shouldShowOpposingGlance;
             const hasHumanOptions = interventions.shouldEscalateToHuman;
+            const hasReflectionPrompt = interventions.shouldTriggerReflection;
             
             // Add AI response
-            addMessage(aiResponse, false, isRedReply, hasOpposingGlance, hasHumanOptions);
+            addMessage(aiResponse, false, isRedReply, hasOpposingGlance, hasHumanOptions, hasReflectionPrompt);
             
             // Update stats
             updateStats();
@@ -557,6 +736,19 @@
                 sendMessage();
             }
         });
+
+        // Human support functions
+        function openEmailApp() {
+            alert('Opening email app...\n\nIn a real implementation, this would open your default email client with a pre-drafted message to a trusted contact.');
+        }
+
+        function openMessagesApp() {
+            alert('Opening messages app...\n\nIn a real implementation, this would open your messaging app to text a friend or family member.');
+        }
+
+        function openTherapistFinder() {
+            alert('Finding therapists...\n\nIn a real implementation, this would open a therapist directory or your insurance provider\'s mental health resources.');
+        }
 
         // Initialize stats
         updateStats();

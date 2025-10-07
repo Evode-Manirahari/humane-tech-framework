@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ALMA Debug Test</title>
+</head>
+<body>
+    <h1>ALMA Debug Test</h1>
+    <div id="chatMessages"></div>
+    <input type="text" id="userInput" placeholder="Type a message..." />
+    <button onclick="testSendMessage()">Send</button>
+    
+    <script>
+        // Simplified ALMA test
+        class ALMATest {
+            constructor() {
+                this.promptCount = 0;
+            }
+            
+            countPrompt() {
+                this.promptCount++;
+            }
+            
+            async callOpenAI(message) {
+                // Simulated response
+                return `This is a test response to: "${message}"`;
+            }
+            
+            async getInterventions(message) {
+                return {
+                    shouldApplyRedReply: this.promptCount % 5 === 0,
+                    shouldShowOpposingGlance: false,
+                    shouldEscalateToHuman: false,
+                    shouldTriggerReflection: false
+                };
+            }
+        }
+        
+        const gx = new ALMATest();
+        
+        function addMessage(content, isUser = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = `<strong>${isUser ? 'You' : 'ALMA'}:</strong> ${content}`;
+            messagesContainer.appendChild(messageDiv);
+        }
+        
+        async function testSendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+            
+            console.log('Sending message:', message);
+            
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+            
+            // Count prompt
+            gx.countPrompt();
+            console.log('Prompt count:', gx.promptCount);
+            
+            // Get interventions
+            const interventions = await gx.getInterventions(message);
+            console.log('Interventions:', interventions);
+            
+            // Get AI response
+            const aiResponse = await gx.callOpenAI(message);
+            console.log('AI Response:', aiResponse);
+            
+            // Add AI response
+            addMessage(aiResponse, false);
+            
+            console.log('Message sent successfully');
+        }
+        
+        // Test on load
+        window.addEventListener('load', () => {
+            console.log('ALMA Debug Test loaded');
+            addMessage('Debug test ready. Try sending a message.', false);
+        });
+    </script>
+</body>
+</html>

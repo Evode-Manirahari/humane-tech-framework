@@ -1,0 +1,23 @@
+{
+  "name": "batched-notifications-example",
+  "version": "1.0.0",
+  "description": "Example implementation of the Batched Notifications pattern from the Humane Technology Framework",
+  "main": "src/example-usage.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/example-usage.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "humane-tech",
+    "notifications",
+    "example",
+    "attention-respect",
+    "user-agency"
+  ],
+  "author": "Humane Technology Framework Contributors",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 

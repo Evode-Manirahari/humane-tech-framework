@@ -1,0 +1,63 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f8f9fa;
+  margin: 0;
+  padding: 2rem;
+  color: #222;
+}
+h1 {
+  color: #2a5d7c;
+}
+input[type="file"] {
+  margin-bottom: 1.5rem;
+}
+.summary {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #2a5d7c;
+}
+.success {
+  color: #2e7d32;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+.error {
+  color: #c62828;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+.pattern-list {
+  list-style: none;
+  padding: 0;
+}
+.pattern-item {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.pattern-title {
+  font-weight: bold;
+  color: #d84315;
+  margin-bottom: 0.3rem;
+}
+.pattern-title .desc {
+  color: #555;
+  font-weight: normal;
+  margin-left: 0.5rem;
+}
+.pattern-meta {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.2rem;
+}
+.pattern-match {
+  font-size: 0.95rem;
+  color: #333;
+  background: #f1f8e9;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  display: inline-block;
+}

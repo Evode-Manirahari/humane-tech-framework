@@ -1,0 +1,19 @@
+{
+  "name": "alma-reality-anchored-conversations",
+  "version": "1.0.0",
+  "description": "ALMA - Reality-anchored conversations with built-in safeguards",
+  "main": "web-ui/alma-clean.html",
+  "scripts": {
+    "build": "echo 'Static site - no build needed'",
+    "start": "echo 'Open web-ui/alma-clean.html in browser'"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "humane-tech",
+    "reality-anchors",
+    "echo-chamber-prevention"
+  ],
+  "author": "ALMA Team",
+  "license": "MIT"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "alma-reality-anchored-conversations",
+  "version": "1.0.0",
+  "description": "ALMA - Reality-anchored conversations with built-in safeguards",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve -s .",
+    "build": "echo 'No build step needed for static site'",
+    "dev": "serve -s ."
+  },
+  "keywords": [
+    "ai",
+    "chatbot",
+    "reality-anchors",
+    "humane-technology",
+    "bias-detection",
+    "conversation-safety"
+  ],
+  "author": "Humane Technology Framework",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}

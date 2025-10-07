@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "alma-reality-anchored-conversations",
+  "builds": [
+    {
+      "src": "web-ui/alma-clean.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/web-ui/alma-clean.html"
+    }
+  ]
+}

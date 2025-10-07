@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALMA - Reality-anchored conversations with built-in safeguards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #faf9f7;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #8bc34a;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-container {
+            height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: #8bc34a;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .ai-message {
+            background: white;
+            border: 1px solid #e0e0e0;
+            margin-right: auto;
+        }
+
+        .red-reply {
+            background: #fff8e1 !important;
+            border: 2px solid #ffc107 !important;
+            border-left: 5px solid #ff9800 !important;
+        }
+
+        .red-reply::before {
+            content: "🕐 MOMENT OF REFLECTION";
+            display: block;
+            font-weight: bold;
+            color: #ff9800;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .opposing-glance {
+            background: #f3e5f5;
+            border: 1px solid #ce93d8;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 0.9em;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .human-options {
+            background: #e8f5e8;
+            border: 1px solid #8bc34a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .human-options h4 {
+            color: #8bc34a;
+            margin-bottom: 10px;
+        }
+
+        .human-options button {
+            background: #8bc34a;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .reflection-prompt {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            font-style: italic;
+            color: #1976d2;
+        }
+
+        .reality-anchors {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .reality-anchors h4 {
+            color: #e65100;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .reality-section {
+            margin: 8px 0;
+            padding: 6px;
+            border-radius: 4px;
+        }
+
+        .cited {
+            background: #e8f5e8;
+            border-left: 3px solid #4caf50;
+        }
+
+        .inference {
+            background: #e3f2fd;
+            border-left: 3px solid #2196f3;
+        }
+
+        .unverified {
+            background: #fff3e0;
+            border-left: 3px solid #ff9800;
+        }
+
+        .bias-check {
+            background: #fce4ec;
+            border: 1px solid #e91e63;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .bias-check h4 {
+            color: #c2185b;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .feedback-panel {
+            background: #f3e5f5;
+            border: 1px solid #9c27b0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+        }
+
+        .feedback-panel h4 {
+            color: #7b1fa2;
+            margin-bottom: 10px;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .feedback-buttons button {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .feedback-thumbs-up {
+            background: #4caf50;
+            color: white;
+        }
+
+        .feedback-thumbs-down {
+            background: #f44336;
+            color: white;
+        }
+
+        .feedback-comment {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9em;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .feedback-submit {
+            background: #9c27b0;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-container input:focus {
+            border-color: #8bc34a;
+        }
+
+        .input-container button {
+            background: #8bc34a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .input-container button:hover {
+            background: #7cb342;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            color: #8bc34a;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .control-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: white;
+        }
+
+        .stats {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .stats h4 {
+            color: #8bc34a;
+            margin-bottom: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .tally {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        .tick {
+            width: 20px;
+            height: 2px;
+            background: #8bc34a;
+        }
+
+        .session-duration {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            border-left: 3px solid #8bc34a;
+        }
+
+        .api-status {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .api-status.connected {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #8bc34a;
+        }
+
+        .api-status.disconnected {
+            background: #fff3e0;
+            color: #f57c00;
+            border: 1px solid #ff9800;
+        }
+
+        .api-key-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 0.8em;
+        }
+
+        .api-key-input:focus {
+            border-color: #8bc34a;
+            outline: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .sidebar {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ALMA</h1>
+            <p>Reality-anchored conversations with built-in safeguards</p>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-container" id="chatMessages">
+                <div class="ai-message">
+                    <strong>ALMA:</strong> Hello! I'm ALMA, your reality-anchored AI assistant. I'm designed to help you explore ideas while maintaining grounding in facts and diverse perspectives. 
+                    
+                    <div class="opposing-glance">
+                        <strong>💭 Note:</strong> I'll periodically share different viewpoints to help you consider multiple angles on complex topics.
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Ask me anything... (try political topics to see echo chamber prevention)" />
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="api-status" id="apiStatus">
+                <div>🔌 API Status: Checking...</div>
+            </div>
+
+            <h3>🔧 Configuration</h3>
+            
+            <div class="control-group">
+                <label>API Key</label>
+                <input type="password" id="apiKey" class="api-key-input" placeholder="Enter OpenAI API key" />
+                <button onclick="testAPI()" style="width: 100%; margin-top: 5px; padding: 6px; font-size: 0.8em;">Test Connection</button>
+            </div>
+
+            <div class="control-group">
+                <label>Red Reply Frequency</label>
+                <select id="redReplyFreq">
+                    <option value="3">Every 3 prompts</option>
+                    <option value="5" selected>Every 5 prompts</option>
+                    <option value="7">Every 7 prompts</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Stance Threshold</label>
+                <select id="stanceThreshold">
+                    <option value="1">1 (very sensitive)</option>
+                    <option value="1.5" selected>1.5 (sensitive)</option>
+                    <option value="2">2 (moderate)</option>
+                    <option value="3">3 (conservative)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Emotional Sensitivity</label>
+                <select id="emotionalSensitivity">
+                    <option value="1">1 (low)</option>
+                    <option value="2">2 (medium)</option>
+                    <option value="3" selected>3 (high)</option>
+                </select>
+            </div>
+
+            <div class="stats">
+                <h4>📊 Session Stats</h4>
+                <div class="stat-item">
+                    <span>Prompts:</span>
+                    <span id="promptCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Stance Score:</span>
+                    <span id="stanceScore">0.00</span>
+                </div>
+                <div class="stat-item">
+                    <span>Emotional Level:</span>
+                    <span id="emotionalLevel">low</span>
+                </div>
+                <div class="stat-item">
+                    <span>Interventions:</span>
+                    <span id="interventions">0</span>
+                </div>
+                
+                <div class="tally" id="tally"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Panel -->
+    <div class="feedback-panel" id="feedbackPanel">
+        <h4>💜 Feedback</h4>
+        <p>How was this response?</p>
+        <div class="feedback-buttons">
+            <button class="feedback-thumbs-up" onclick="submitFeedback('positive')">👍</button>
+            <button class="feedback-thumbs-down" onclick="submitFeedback('negative')">👎</button>
+        </div>
+        <textarea class="feedback-comment" id="feedbackComment" placeholder="Optional: Tell us how to improve..."></textarea>
+        <button class="feedback-submit" onclick="submitFeedback('comment')">Submit</button>
+        <button onclick="hideFeedback()" style="background: #ccc; color: #666; margin-left: 8px;">Close</button>
+    </div>
+
+    <script>
+        // Enhanced ALMA SDK with OpenAI integration
+        class ALMA {
+            constructor(config = {}) {
+                this.config = {
+                    redEveryNPrompts: config.redEveryNPrompts || 5,
+                    stanceThreshold: config.stanceThreshold || 1.5,
+                    emotionalSensitivity: config.emotionalSensitivity || 3,
+                    stanceWindowMinutes: 15,
+                    useOpenAI: false,
+                    ...config
+                };
+                this.promptCount = 0;
+                this.stanceScore = 0;
+                this.emotionalLevel = 'low';
+                this.interventions = 0;
+                this.sessionStartTime = Date.now();
+                this.stanceHistory = [];
+                this.lastReflectionPrompt = 0;
+                this.lastOpposingGlanceTime = null;
+                this.apiKey = '';
+                this.apiConnected = false;
+                this.feedbackData = [];
+                this.biasHistory = [];
+            }
+
+            async testOpenAIConnection(apiKey) {
+                try {
+                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-4o-mini',
+                            messages: [
+                                { role: 'system', content: 'You are a helpful assistant. Respond with just "OK".' },
+                                { role: 'user', content: 'Test connection' }
+                            ],
+                            max_tokens: 10
+                        })
+                    });
+
+                    if (response.ok) {
+                        this.apiConnected = true;
+                        this.apiKey = apiKey;
+                        this.config.useOpenAI = true;
+                        return true;
+                    } else {
+                        this.apiConnected = false;
+                        this.config.useOpenAI = false;
+                        return false;
+                    }
+                } catch (error) {
+                    this.apiConnected = false;
+                    this.config.useOpenAI = false;
+                    return false;
+                }
+            }
+
+            async callOpenAI(userMessage) {
+                if (!this.config.useOpenAI || !this.apiKey) {
+                    return this.generateSimulatedResponse(userMessage);
+                }
+
+                try {
+                    const systemPrompt = `You are ALMA, a reality-anchored AI assistant. You must:
+- Provide balanced, factual responses
+- Acknowledge uncertainty when appropriate
+- Consider multiple perspectives on complex topics
+- Use evidence-based reasoning
+- Be helpful but not overly confident`;
+
+                    console.log('Making OpenAI API call...');
+                    
+                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${this.apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-4o-mini',
+                            messages: [
+                                { role: 'system', content: systemPrompt },
+                                { role: 'user', content: userMessage }
+                            ],
+                            max_tokens: 500
+                        })
+                    });
+
+                    console.log('OpenAI response status:', response.status);
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('OpenAI response:', data);
+                        return data.choices[0].message.content;
+                    } else {
+                        const errorText = await response.text();
+                        console.error('OpenAI API error:', response.status, errorText);
+                        throw new Error(`API request failed: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('OpenAI API error:', error);
+                    return this.generateSimulatedResponse(userMessage);
+                }
+            }
+
+            generateSimulatedResponse(message) {
+                const responses = [
+                    "That's an interesting question. Let me think through this with you...",
+                    "I can help you explore that topic. Here's what I understand...",
+                    "That's a complex issue with multiple perspectives. Let me share some thoughts...",
+                    "I appreciate you bringing this up. Let's consider the various angles...",
+                    "That's a thoughtful question. Here's how I might approach this...",
+                    "Let me break this down systematically...",
+                    "There are several ways to think about this...",
+                    "That's a nuanced topic worth exploring..."
+                ];
+                
+                // Add context-aware responses for political topics
+                const lowerMessage = message.toLowerCase();
+                if (lowerMessage.includes('politics') || lowerMessage.includes('government') || lowerMessage.includes('policy')) {
+                    return "This is a complex political issue with many perspectives. Let's examine the different viewpoints and evidence... (Simulated - API quota exceeded)";
+                }
+                
+                return responses[Math.floor(Math.random() * responses.length)] + ` (Simulated response - API quota exceeded)`;
+            }
+
+            countPrompt() {
+                this.promptCount++;
+            }
+
+            async getInterventions(message) {
+                // Feature 1: Red Reply Every N Prompts (Oreo Cookie Psychology)
+                const shouldApplyRedReply = this.promptCount > 0 && this.promptCount % this.config.redEveryNPrompts === 0;
+                
+                // Feature 2: Stance Counter-Balance - Challenge Echo Chambers
+                const shouldShowOpposingGlance = this.shouldShowOpposingGlance();
+                
+                // Feature 3: Emotional Escalation Detection
+                const shouldEscalateToHuman = this.detectEmotionalEscalation(message);
+                
+                // Feature 4: Reflection Prompts
+                const shouldTriggerReflection = this.shouldTriggerReflection();
+                
+                // Analyze current message
+                const currentStance = this.analyzeStance(message);
+                const currentEmotion = this.analyzeEmotion(message);
+                
+                // Update stance history with timestamp
+                this.stanceHistory.push({
+                    score: currentStance,
+                    timestamp: Date.now(),
+                    message: message.substring(0, 50) + '...'
+                });
+                
+                // Clean old stance history (keep only last 15 minutes)
+                this.cleanStanceHistory();
+
+                const interventions = {
+                    shouldApplyRedReply,
+                    shouldShowOpposingGlance,
+                    shouldEscalateToHuman,
+                    shouldTriggerReflection,
+                    stanceScore: currentStance,
+                    emotionalLevel: currentEmotion,
+                    sessionDuration: this.getSessionDuration(),
+                    averageStance: this.getAverageStance()
+                };
+
+                // Count interventions
+                const interventionCount = [shouldApplyRedReply, shouldShowOpposingGlance, shouldEscalateToHuman, shouldTriggerReflection]
+                    .filter(Boolean).length;
+                this.interventions += interventionCount;
+
+                return interventions;
+            }
+
+            analyzeStance(message) {
+                // Enhanced stance analysis to better detect ideological positions
+                const leftWords = [
+                    'liberal', 'progressive', 'democrat', 'social justice', 'equality', 'diversity', 'inclusion',
+                    'systemic', 'privilege', 'oppression', 'intersectionality', 'climate change', 'renewable',
+                    'healthcare', 'universal', 'public', 'government', 'regulation', 'tax', 'wealth gap',
+                    'minimum wage', 'union', 'workers rights', 'environmental', 'sustainability', 'reform'
+                ];
+                
+                const rightWords = [
+                    'conservative', 'traditional', 'republican', 'free market', 'liberty', 'freedom', 'individual',
+                    'personal responsibility', 'small government', 'deregulation', 'capitalism', 'entrepreneur',
+                    'meritocracy', 'traditional values', 'family values', 'patriotism', 'national security',
+                    'law and order', 'constitutional', 'limited government', 'fiscal responsibility', 'self-reliance'
+                ];
+                
+                let score = 0;
+                const lowerMessage = message.toLowerCase();
+                
+                // Weight words based on intensity
+                leftWords.forEach(word => {
+                    if (lowerMessage.includes(word)) {
+                        const intensity = word.length > 10 ? 0.8 : 0.5;
+                        score += intensity;
+                    }
+                });
+                
+                rightWords.forEach(word => {
+                    if (lowerMessage.includes(word)) {
+                        const intensity = word.length > 10 ? 0.8 : 0.5;
+                        score -= intensity;
+                    }
+                });
+
+                // Boost score for emotional language (stronger stance indicators)
+                const emotionalBoosters = ['always', 'never', 'completely', 'totally', 'absolutely', 'fundamentally'];
+                emotionalBoosters.forEach(booster => {
+                    if (lowerMessage.includes(booster)) {
+                        score = score * 1.3;
+                    }
+                });
+
+                this.stanceScore = Math.max(-3, Math.min(3, score));
+                return this.stanceScore;
+            }
+
+            analyzeEmotion(message) {
+                const emotionalWords = ['anxious', 'worried', 'depressed', 'sad', 'hopeless', 'scared', 'lonely', 'overwhelmed', 'stressed', 'frustrated', 'angry', 'upset', 'hurt', 'broken', 'empty', 'lost', 'confused', 'tired', 'exhausted'];
+                const lowerMessage = message.toLowerCase();
+                
+                const emotionalCount = emotionalWords.filter(word => lowerMessage.includes(word)).length;
+                
+                if (emotionalCount >= this.config.emotionalSensitivity) {
+                    this.emotionalLevel = 'high';
+                } else if (emotionalCount >= 1) {
+                    this.emotionalLevel = 'medium';
+                } else {
+                    this.emotionalLevel = 'low';
+                }
+
+                return this.emotionalLevel;
+            }
+
+            detectEmotionalEscalation(message) {
+                const crisisWords = ['suicide', 'kill myself', 'end it all', 'not worth living', 'give up', 'want to die', 'hurt myself', 'self harm', 'no point living', 'better off dead'];
+                const lowerMessage = message.toLowerCase();
+                
+                return crisisWords.some(word => lowerMessage.includes(word)) || this.emotionalLevel === 'high';
+            }
+
+            // Feature 1: Oreo Cookie Psychology - Red Reply Every N Prompts
+            shouldApplyRedReply() {
+                return this.promptCount > 0 && this.promptCount % this.config.redEveryNPrompts === 0;
+            }
+
+            // Feature 2: Stance Counter-Balance - Challenge Echo Chambers
+            shouldShowOpposingGlance() {
+                const sessionDuration = this.getSessionDuration();
+                const averageStance = this.getAverageStance();
+                const hasStanceDrift = Math.abs(averageStance) >= this.config.stanceThreshold;
+                const isPoliticalTopic = this.detectPoliticalTopic();
+                const hasRepeatedStance = this.detectRepeatedStance();
+                const timeSinceLastGlance = this.getTimeSinceLastGlance();
+                
+                // More frequent triggers to challenge echo chambers:
+                // 1. Every 15 minutes (instead of 25) for long sessions
+                // 2. When stance drift is detected (lowered threshold)
+                // 3. When political topics are discussed
+                // 4. When same stance is repeated multiple times
+                // 5. Every 8 prompts as backup frequency
+                return (sessionDuration >= 15 && (hasStanceDrift || isPoliticalTopic)) || 
+                       hasRepeatedStance || 
+                       (this.promptCount > 0 && this.promptCount % 8 === 0 && timeSinceLastGlance > 5) ||
+                       (sessionDuration >= 10 && Math.abs(averageStance) >= 1.5);
+            }
+
+            // Feature 3: Reflection Prompts
+            shouldTriggerReflection() {
+                const shouldTrigger = this.promptCount > 0 && 
+                    (this.promptCount % 10 === 0 || this.emotionalLevel === 'medium' || this.emotionalLevel === 'high');
+                
+                if (shouldTrigger && this.promptCount > this.lastReflectionPrompt + 5) {
+                    this.lastReflectionPrompt = this.promptCount;
+                    return true;
+                }
+                return false;
+            }
+
+            // Helper methods
+            getSessionDuration() {
+                return Math.round((Date.now() - this.sessionStartTime) / (1000 * 60));
+            }
+
+            getAverageStance() {
+                if (this.stanceHistory.length === 0) return 0;
+                
+                const recentHistory = this.stanceHistory.slice(-10);
+                const sum = recentHistory.reduce((acc, entry) => acc + entry.score, 0);
+                return sum / recentHistory.length;
+            }
+
+            cleanStanceHistory() {
+                const cutoffTime = Date.now() - (this.config.stanceWindowMinutes * 60 * 1000);
+                this.stanceHistory = this.stanceHistory.filter(entry => entry.timestamp > cutoffTime);
+            }
+
+            // Enhanced echo chamber detection methods
+            detectPoliticalTopic() {
+                const politicalKeywords = [
+                    'politics', 'political', 'government', 'policy', 'election', 'vote', 'democrat', 'republican',
+                    'liberal', 'conservative', 'left', 'right', 'progressive', 'traditional', 'social justice',
+                    'economy', 'tax', 'healthcare', 'climate', 'immigration', 'abortion', 'gun control',
+                    'freedom', 'equality', 'liberty', 'justice', 'democracy', 'authoritarian'
+                ];
+                
+                const recentMessages = this.stanceHistory.slice(-5).map(entry => entry.message);
+                const allText = recentMessages.join(' ').toLowerCase();
+                
+                return politicalKeywords.some(keyword => allText.includes(keyword));
+            }
+
+            detectRepeatedStance() {
+                if (this.stanceHistory.length < 3) return false;
+                
+                const recentStances = this.stanceHistory.slice(-5).map(entry => entry.score);
+                
+                // Check if last 3-5 messages have similar stance (echo chamber pattern)
+                const avgRecentStance = recentStances.reduce((sum, score) => sum + score, 0) / recentStances.length;
+                const variance = recentStances.reduce((sum, score) => sum + Math.pow(score - avgRecentStance, 2), 0) / recentStances.length;
+                
+                // Low variance + strong stance = potential echo chamber
+                // Also check if we have multiple messages with similar scores
+                const similarStances = recentStances.filter(score => Math.abs(score - avgRecentStance) <= 0.3).length;
+                
+                return (variance < 0.5 && Math.abs(avgRecentStance) >= 1.0) || 
+                       (similarStances >= 3 && Math.abs(avgRecentStance) >= 0.8);
+            }
+
+            getTimeSinceLastGlance() {
+                if (!this.lastOpposingGlanceTime) return 999;
+                return Math.round((Date.now() - this.lastOpposingGlanceTime) / (1000 * 60));
+            }
+
+            // Generate challenging opposing perspective content
+            generateOpposingGlance() {
+                const averageStance = this.getAverageStance();
+                const isPolitical = this.detectPoliticalTopic();
+                const repeatedStance = this.detectRepeatedStance();
+                
+                // More challenging and diverse perspectives to break echo chambers
+                const challengingViews = {
+                    leftChallenge: [
+                        "🤔 What if the free market actually perpetuates the inequalities you're trying to solve? Research shows market failures in healthcare, education, and housing often require intervention.",
+                        "💭 Consider: Maybe individual responsibility works best when systemic barriers are removed first? Studies find that structural change often precedes individual behavior change.",
+                        "🔄 What if the 'efficient market' theory doesn't account for power imbalances and information asymmetry? Behavioral economics reveals systematic market inefficiencies."
+                    ],
+                    rightChallenge: [
+                        "🤔 What if collective solutions sometimes create more problems than they solve? Historical analysis shows many government programs had unintended consequences.",
+                        "💭 Consider: Maybe individual choice and voluntary cooperation can solve problems without coercion? Examples of voluntary community solutions often outperform mandated programs.",
+                        "🔄 What if the 'systemic' framing actually disempowers people from making positive changes? Research suggests agency-focused approaches can be more motivating."
+                    ],
+                    centristChallenge: [
+                        "🎯 What if the most effective solutions require uncomfortable trade-offs between competing values? Policy analysis shows that perfect solutions often don't exist.",
+                        "⚖️ Consider: Maybe the debate itself reveals that both sides have valid concerns? Studies find that acknowledging opposing viewpoints improves decision-making."
+                    ]
+                };
+                
+                // Track when we showed the last opposing glance
+                this.lastOpposingGlanceTime = Date.now();
+                
+                // Select appropriate challenge based on stance and context
+                if (Math.abs(averageStance) > 1.5 || repeatedStance) {
+                    // Strong stance or echo chamber - use more challenging content
+                    const views = averageStance > 0 ? challengingViews.leftChallenge : challengingViews.rightChallenge;
+                    const randomView = views[Math.floor(Math.random() * views.length)];
+                    return {
+                        content: randomView,
+                        offset: averageStance > 0 ? -2.0 : 2.0
+                    };
+                } else if (isPolitical) {
+                    // Political topic - use nuanced challenge
+                    const randomView = challengingViews.centristChallenge[Math.floor(Math.random() * challengingViews.centristChallenge.length)];
+                    return {
+                        content: randomView,
+                        offset: averageStance > 0 ? -1.0 : 1.0
+                    };
+                } else {
+                    // General topic - use moderate challenge
+                    return {
+                        content: "🤔 Consider: What if there are valid perspectives you haven't fully explored yet? Sometimes stepping back helps us see the bigger picture.",
+                        offset: 0
+                    };
+                }
+            }
+
+            // Generate reflection prompt
+            generateReflectionPrompt() {
+                const prompts = [
+                    "What do we know vs what did we assume so far?",
+                    "What evidence supports this view?",
+                    "What would someone with a different perspective say?",
+                    "What are we missing here?",
+                    "How confident should we be in this conclusion?"
+                ];
+                return prompts[Math.floor(Math.random() * prompts.length)];
+            }
+
+            // Feature 6: Reality Anchors with [Cited], [Inference], [Unverified]
+            generateRealityAnchors(response) {
+                const sentences = response.split(/[.!?]+/).filter(s => s.trim().length > 0);
+                const anchors = {
+                    cited: [],
+                    inference: [],
+                    unverified: []
+                };
+
+                sentences.forEach(sentence => {
+                    const trimmed = sentence.trim();
+                    if (!trimmed) return;
+
+                    // Simple heuristics for classification
+                    if (this.containsFactualClaims(trimmed)) {
+                        anchors.cited.push(trimmed);
+                    } else if (this.containsOpinions(trimmed)) {
+                        anchors.inference.push(trimmed);
+                    } else {
+                        anchors.unverified.push(trimmed);
+                    }
+                });
+
+                return anchors;
+            }
+
+            containsFactualClaims(sentence) {
+                const factualIndicators = [
+                    'according to', 'research shows', 'studies indicate', 'data suggests',
+                    'statistics show', 'evidence shows', 'findings reveal', 'analysis shows',
+                    'reports indicate', 'survey shows', 'results show'
+                ];
+                const lowerText = sentence.toLowerCase();
+                return factualIndicators.some(indicator => lowerText.includes(indicator));
+            }
+
+            containsOpinions(sentence) {
+                const opinionIndicators = [
+                    'i think', 'i believe', 'in my opinion', 'it seems', 'appears to',
+                    'likely', 'probably', 'might', 'could', 'may', 'suggests',
+                    'indicates', 'implies', 'tends to', 'generally'
+                ];
+                const lowerText = sentence.toLowerCase();
+                return opinionIndicators.some(indicator => lowerText.includes(indicator));
+            }
+
+            // Feature 7: Bias Detection for Equality and Inclusion
+            detectBias(message) {
+                const biases = [];
+                
+                // Gender bias
+                const genderTerms = ['he', 'she', 'his', 'her', 'him', 'man', 'woman', 'guy', 'girl'];
+                const genderCount = genderTerms.filter(term => message.toLowerCase().includes(term)).length;
+                if (genderCount > 3) {
+                    biases.push('Gender bias detected - consider using inclusive language');
+                }
+
+                // Racial bias
+                const racialTerms = ['black', 'white', 'asian', 'hispanic', 'native', 'minority'];
+                const racialCount = racialTerms.filter(term => message.toLowerCase().includes(term)).length;
+                if (racialCount > 2) {
+                    biases.push('Racial bias potential - ensure inclusive representation');
+                }
+
+                // Age bias
+                const ageTerms = ['old', 'young', 'elderly', 'aged', 'senior', 'junior'];
+                const ageCount = ageTerms.filter(term => message.toLowerCase().includes(term)).length;
+                if (ageCount > 2) {
+                    biases.push('Age bias potential - consider diverse age perspectives');
+                }
+
+                // Ability bias
+                const abilityTerms = ['disabled', 'handicapped', 'normal', 'abnormal', 'retarded'];
+                const abilityCount = abilityTerms.filter(term => message.toLowerCase().includes(term)).length;
+                if (abilityCount > 0) {
+                    biases.push('Ability bias detected - use person-first language');
+                }
+
+                // Socioeconomic bias
+                const classTerms = ['poor', 'rich', 'wealthy', 'low-class', 'high-class', 'elite'];
+                const classCount = classTerms.filter(term => message.toLowerCase().includes(term)).length;
+                if (classCount > 2) {
+                    biases.push('Class bias potential - consider diverse socioeconomic perspectives');
+                }
+
+                return biases;
+            }
+
+            // Feature 8: User Feedback Collection
+            collectFeedback(type, comment = '') {
+                const feedback = {
+                    timestamp: Date.now(),
+                    type: type,
+                    comment: comment,
+                    sessionId: this.sessionId || 'unknown',
+                    promptCount: this.promptCount,
+                    emotionalLevel: this.emotionalLevel,
+                    stanceScore: this.stanceScore
+                };
+
+                this.feedbackData.push(feedback);
+                
+                // In a real implementation, this would be sent to a server
+                console.log('Feedback collected:', feedback);
+                
+                // Show confirmation
+                this.showFeedbackConfirmation(type);
+            }
+
+            showFeedbackConfirmation(type) {
+                const message = type === 'positive' ? 'Thanks for the positive feedback!' : 
+                               type === 'negative' ? 'Thanks for the feedback. We\'ll improve!' : 
+                               'Thanks for your comment!';
+                
+                // Create temporary confirmation
+                const confirmation = document.createElement('div');
+                confirmation.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #4caf50;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    z-index: 1001;
+                    font-size: 0.9em;
+                `;
+                confirmation.textContent = message;
+                document.body.appendChild(confirmation);
+                
+                setTimeout(() => {
+                    document.body.removeChild(confirmation);
+                }, 3000);
+            }
+        }
+        }
+
+        // Initialize ALMA SDK
+        let gx = new ALMA();
+
+        // Update configuration when controls change
+        document.getElementById('redReplyFreq').addEventListener('change', (e) => {
+            gx.config.redEveryNPrompts = parseInt(e.target.value);
+        });
+
+        document.getElementById('stanceThreshold').addEventListener('change', (e) => {
+            gx.config.stanceThreshold = parseFloat(e.target.value);
+        });
+
+        document.getElementById('emotionalSensitivity').addEventListener('change', (e) => {
+            gx.config.emotionalSensitivity = parseInt(e.target.value);
+        });
+
+        async function testAPI() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const statusDiv = document.getElementById('apiStatus');
+            
+            if (!apiKey) {
+                statusDiv.innerHTML = '<div>🔌 API Status: No API key</div>';
+                statusDiv.className = 'api-status';
+                return;
+            }
+
+            statusDiv.innerHTML = '<div>🔌 API Status: Testing connection...</div>';
+            statusDiv.className = 'api-status';
+
+            try {
+                console.log('Testing API with key:', apiKey.substring(0, 10) + '...');
+                
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: 'You are a helpful assistant. Respond with just "OK".' },
+                            { role: 'user', content: 'Test connection' }
+                        ],
+                        max_tokens: 10
+                    })
+                });
+
+                console.log('API Response status:', response.status);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('API Response:', data);
+                    statusDiv.innerHTML = '<div>✅ API Status: Connected to OpenAI</div>';
+                    statusDiv.className = 'api-status connected';
+                    gx.apiConnected = true;
+                    gx.apiKey = apiKey;
+                    gx.config.useOpenAI = true;
+                } else {
+                    const error = await response.text();
+                    console.error('API Error:', error);
+                    statusDiv.innerHTML = '<div>❌ API Status: Connection failed<br><small>Check your API key and billing</small></div>';
+                    statusDiv.className = 'api-status disconnected';
+                    gx.apiConnected = false;
+                    gx.config.useOpenAI = false;
+                }
+            } catch (error) {
+                console.error('Connection Error:', error);
+                statusDiv.innerHTML = '<div>❌ API Status: Connection failed<br><small>Network error or invalid key</small></div>';
+                statusDiv.className = 'api-status disconnected';
+                gx.apiConnected = false;
+                gx.config.useOpenAI = false;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('promptCount').textContent = gx.promptCount;
+            document.getElementById('stanceScore').textContent = gx.stanceScore.toFixed(2);
+            document.getElementById('emotionalLevel').textContent = gx.emotionalLevel;
+            document.getElementById('interventions').textContent = gx.interventions;
+            
+            // Update tally with session duration
+            updateTallyWithDuration();
+        }
+
+        function updateTallyWithDuration() {
+            const tally = document.getElementById('tally');
+            tally.innerHTML = '';
+            
+            // Add tally marks
+            for (let i = 0; i < Math.min(gx.promptCount, 20); i++) {
+                const tick = document.createElement('div');
+                tick.className = 'tick';
+                tally.appendChild(tick);
+            }
+            
+            // Add overflow counter if needed
+            if (gx.promptCount > 20) {
+                const overflow = document.createElement('span');
+                overflow.textContent = ` (+${gx.promptCount - 20})`;
+                overflow.style.fontSize = '12px';
+                overflow.style.color = '#666';
+                tally.appendChild(overflow);
+            }
+            
+            // Add session duration display
+            const duration = calculateSessionDuration();
+            const durationDisplay = document.createElement('div');
+            durationDisplay.className = 'session-duration';
+            durationDisplay.innerHTML = `
+                <div style="font-size: 10px; color: #888; margin-top: 8px;">
+                    <strong>Session:</strong> ${duration}
+                </div>
+                <div style="font-size: 9px; color: #999; margin-top: 2px;">
+                    ${gx.promptCount} prompts • ${gx.getSessionDuration()} minutes
+                </div>
+            `;
+            tally.appendChild(durationDisplay);
+        }
+
+        function calculateSessionDuration() {
+            const sessionDuration = gx.getSessionDuration();
+            
+            if (sessionDuration < 1) {
+                return 'Just started';
+            } else if (sessionDuration < 5) {
+                return 'Short session';
+            } else if (sessionDuration < 15) {
+                return 'Medium session';
+            } else if (sessionDuration < 30) {
+                return 'Long session';
+            } else if (sessionDuration < 60) {
+                return 'Very long session';
+            } else {
+                return 'Extended session - consider a break';
+            }
+        }
+
+        async function addMessage(content, isUser = false, isRedReply = false, hasOpposingGlance = false, hasHumanOptions = false, hasReflectionPrompt = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'} ${isRedReply ? 'red-reply' : ''}`;
+
+            let messageContent = `<strong>${isUser ? 'You' : 'ALMA'}:</strong> ${content}`;
+
+            // Add reality anchors for AI responses
+            if (!isUser) {
+                const realityAnchors = gx.generateRealityAnchors(content);
+                if (realityAnchors.cited.length > 0 || realityAnchors.inference.length > 0 || realityAnchors.unverified.length > 0) {
+                    messageContent += `
+                        <div class="reality-anchors">
+                            <h4>🔍 Reality Anchors</h4>
+                            ${realityAnchors.cited.length > 0 ? `
+                                <div class="reality-section cited">
+                                    <strong>[Cited]:</strong> ${realityAnchors.cited.slice(0, 2).join('. ')}
+                                </div>
+                            ` : ''}
+                            ${realityAnchors.inference.length > 0 ? `
+                                <div class="reality-section inference">
+                                    <strong>[Inference]:</strong> ${realityAnchors.inference.slice(0, 2).join('. ')}
+                                </div>
+                            ` : ''}
+                            ${realityAnchors.unverified.length > 0 ? `
+                                <div class="reality-section unverified">
+                                    <strong>[Unverified]:</strong> ${realityAnchors.unverified.slice(0, 2).join('. ')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+            }
+
+            // Add bias detection for user messages
+            if (isUser) {
+                const biases = gx.detectBias(content);
+                if (biases.length > 0) {
+                    messageContent += `
+                        <div class="bias-check">
+                            <h4>🎯 Bias Detection</h4>
+                            ${biases.map(bias => `<div>• ${bias}</div>`).join('')}
+                        </div>
+                    `;
+                }
+            }
+
+            // Add opposing glance if needed
+            if (hasOpposingGlance && !isUser) {
+                const opposingGlance = gx.generateOpposingGlance();
+                if (opposingGlance) {
+                    messageContent += `
+                        <div class="opposing-glance">
+                            <strong>Different Perspective:</strong> ${opposingGlance.content}
+                        </div>
+                    `;
+                }
+            }
+            
+            // Add human options if needed
+            if (hasHumanOptions && !isUser) {
+                messageContent += `
+                    <div class="human-options">
+                        <h4>💚 Human Support Available</h4>
+                        <p>If you're going through a difficult time, consider reaching out to:</p>
+                        <button onclick="openEmailApp()">Open Email</button>
+                        <button onclick="openMessagesApp()">Open Messages</button>
+                        <button onclick="openTherapistFinder()">Find Therapist</button>
+                    </div>
+                `;
+            }
+
+            // Add reflection prompt if needed
+            if (hasReflectionPrompt && !isUser) {
+                const reflectionPrompt = gx.generateReflectionPrompt();
+                messageContent += `
+                    <div class="reflection-prompt">
+                        <strong>🤔 Reflection:</strong> ${reflectionPrompt}
+                    </div>
+                `;
+            }
+
+            messageDiv.innerHTML = messageContent;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Show feedback panel for AI responses
+            if (!isUser) {
+                setTimeout(() => {
+                    showFeedbackPanel();
+                }, 1000);
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+
+            // Count prompt
+            gx.countPrompt();
+
+            // Get interventions
+            const interventions = await gx.getInterventions(message);
+
+            // Get AI response (real or simulated)
+            const aiResponse = await gx.callOpenAI(message);
+
+            // Add AI response with interventions
+            await addMessage(
+                aiResponse,
+                false,
+                interventions.shouldApplyRedReply,
+                interventions.shouldShowOpposingGlance,
+                interventions.shouldEscalateToHuman,
+                interventions.shouldTriggerReflection
+            );
+
+            // Update stats
+            updateStats();
+        }
+
+        // Handle Enter key
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Simulated functions for human support
+        function openEmailApp() {
+            alert('Opening email app... (This would open your default email client)');
+        }
+
+        function openMessagesApp() {
+            alert('Opening messages app... (This would open your default messaging app)');
+        }
+
+        function openTherapistFinder() {
+            alert('Opening therapist finder... (This would open Psychology Today or similar service)');
+        }
+
+        // Feedback system functions
+        function showFeedbackPanel() {
+            const panel = document.getElementById('feedbackPanel');
+            panel.style.display = 'block';
+        }
+
+        function hideFeedback() {
+            const panel = document.getElementById('feedbackPanel');
+            panel.style.display = 'none';
+        }
+
+        function submitFeedback(type) {
+            const comment = document.getElementById('feedbackComment').value;
+            gx.collectFeedback(type, comment);
+            hideFeedback();
+            
+            // Clear comment field
+            document.getElementById('feedbackComment').value = '';
+        }
+
+        // Initialize
+        updateStats();
+        
+        // Auto-test API on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testAPI();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
